@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="UTF-8">
+    <title>Untitled</title>
+    
+
+  </head>
+    
+  <body>
+  <!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Music Scale Challenge Pro</title>
+
+    <style>
+
+        body { font-family: 'Segoe UI', sans-serif; background-color: #121212; color: white; display: flex; justify-content: center; padding: 20px; margin: 0; }
+
+        .container { background-color: #1e1e1e; padding: 25px; border-radius: 20px; text-align: center; width: 100%; max-width: 400px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+
+        h1 { color: #00d1b2; margin-bottom: 10px; font-size: 22px; }
+
+        
+
+        .score-board { display: flex; justify-content: space-around; background: #2a2a2a; padding: 10px; border-radius: 10px; margin-bottom: 20px; border: 1px solid #333; }
+
+        .score-box { display: flex; flex-direction: column; }
+
+        .score-val { font-size: 24px; font-weight: bold; color: #ffdd57; }
+
+        .score-label { font-size: 0.7rem; text-transform: uppercase; color: #888; }
+
+        .mode-switch { background: #333; padding: 10px; border-radius: 10px; margin-bottom: 15px; display: flex; align-items: center; justify-content: center; gap: 10px; }
+
+        
+
+        select, input, button { width: 100%; padding: 14px; margin: 5px 0; border-radius: 10px; border: none; font-size: 16px; box-sizing: border-box; }
+
+        select { background-color: #333; color: white; }
+
+        input { background-color: white; color: black; font-weight: bold; text-align: center; }
+
+        
+
+        .btn-gen { background-color: #00d1b2; color: white; font-weight: bold; cursor: pointer; margin-top: 10px; }
+
+        .btn-check { background-color: #3298dc; color: white; font-weight: bold; }
+
+        
+
+        #domanda-box { background: #252525; padding: 20px; border-radius: 15px; margin: 15px 0; border: 1px dashed #444; }
+
+        #info-scala { font-size: 0.9rem; color: #00d1b2; margin-bottom: 5px; height: 20px; }
+
+        #domanda { font-size: 1.6rem; color: white; font-weight: bold; }
+
+        
+
+        #feedback { font-weight: bold; margin-top: 10px; min-height: 25px; font-size: 1.1rem; transition: 0.3s; }
+
+        label { display: block; text-align: left; font-size: 0.8rem; color: #888; margin-top: 5px; }
+
+        
+
+        /* Toggle Switch Style */
+
+        .switch { position: relative; display: inline-block; width: 40px; height: 20px; }
+
+        .switch input { opacity: 0; width: 0; height: 0; }
+
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #555; transition: .4s; border-radius: 20px; }
+
+        .slider:before { position: absolute; content: ""; height: 14px; width: 14px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
+
+        input:checked + .slider { background-color: #00d1b2; }
+
+        input:checked + .slider:before { transform: translateX(20px); }
+
+    </style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>Scale Challenge 🏆</h1>
+
+    
+
+    <div class="score-board">
+
+        <div class="score-box">
+
+            <span class="score-label">Current Streak</span>
+
+            <span id="current-score" class="score-val">0</span>
+
+        </div>
+
+        <div class="score-box">
+
+            <span class="score-label">Best Record</span>
+
+            <span id="high-score" class="score-val">0</span>
+
+        </div>
+
+    </div>
+
+    <div class="mode-switch">
+
+        <span>Random Scale Mode</span>
+
+        <label class="switch">
+
+            <input type="checkbox" id="random-mode">
+
+            <span class="slider"></span>
+
+        </label>
+
+    </div>
+
+    <div id="settings-area">
+
+        <label>Root Note:</label>
+
+        <select id="tonica">
+
+            <option value="C">C</option><option value="C#">C#</option><option value="Db">Db</option>
+
+            <option value="D">D</option><option value="D#">D#</option><option value="Eb">Eb</option>
+
+            <option value="E">E</option><option value="F">F</option><option value="F#">F#</option>
+
+            <option value="Gb">Gb</option><option value="G">G</option><option value="G#">G#</option>
+
+            <option value="Ab">Ab</option><option value="A">A</option><option value="A#">A#</option>
+
+            <option value="Bb">Bb</option><option value="B">B</option>
+
+        </select>
+
+        <label>Scale Type:</label>
+
+        <select id="tipo">
+
+            <option value="major">Major</option>
+
+            <option value="naturalMinor">Natural Minor</option>
+
+            <option value="harmonicMinor">Harmonic Minor</option>
+
+            <option value="pentatonicMinor">Pentatonic Minor</option>
+
+            <option value="blues">Blues Scale</option>
+
+        </select>
+
+    </div>
+
+    <button class="btn-gen" id="btnGenera">START / NEW QUESTION</button>
+
+    <div id="domanda-box">
+
+        <div id="info-scala"></div>
+
+        <div id="domanda">Ready?</div>
+
+    </div>
+
+    
+
+    <input type="text" id="risposta" placeholder="Enter note (e.g. Ab)" autocomplete="off">
+
+    <button class="btn-check" id="btnCheck">VERIFY</button>
+
+    
+
+    <div id="feedback"></div>
+
+</div>
+
+<script>
+
+    const noteMap = {
+
+        "C": 0, "C#": 1, "Db": 1, "D": 2, "D#": 3, "Eb": 3, "E": 4, "F": 5, 
+
+        "F#": 6, "Gb": 6, "G": 7, "G#": 8, "Ab": 8, "A": 9, "A#": 10, "Bb": 10, "B": 11
+
+    };
+
+    
+
+    const patterns = {
+
+        major: [0, 2, 4, 5, 7, 9, 11],
+
+        naturalMinor: [0, 2, 3, 5, 7, 8, 10],
+
+        harmonicMinor: [0, 2, 3, 5, 7, 8, 11],
+
+        pentatonicMinor: [0, 3, 5, 7, 10],
+
+        blues: [0, 3, 5, 6, 7, 10]
+
+    };
+
+    let targetValue = -1;
+
+    let score = 0;
+
+    let highScore = localStorage.getItem('scaleHighScore') || 0;
+
+    document.getElementById('high-score').innerText = highScore;
+
+    function nuovaDomanda() {
+
+        const isRandom = document.getElementById("random-mode").checked;
+
+        let root, type;
+
+        if (isRandom) {
+
+            const keys = Object.keys(noteMap);
+
+            root = keys[Math.floor(Math.random() * keys.length)];
+
+            const types = Object.keys(patterns);
+
+            type = types[Math.floor(Math.random() * types.length)];
+
+            document.getElementById("info-scala").innerText = `${root} ${type.toUpperCase()}`;
+
+        } else {
+
+            root = document.getElementById("tonica").value;
+
+            type = document.getElementById("tipo").value;
+
+            document.getElementById("info-scala").innerText = "";
+
+        }
+
+        const startValue = noteMap[root];
+
+        const currentScaleValues = patterns[type].map(interval => (startValue + interval) % 12);
+
+        const randomIndex = Math.floor(Math.random() * currentScaleValues.length);
+
+        targetValue = currentScaleValues[randomIndex];
+
+        document.getElementById("domanda").innerHTML = `Degree ${randomIndex + 1}`;
+
+        document.getElementById("feedback").innerText = "";
+
+        document.getElementById("risposta").value = "";
+
+        document.getElementById("risposta").focus();
+
+    }
+
+    function verifica() {
+
+        const userRes = document.getElementById("risposta").value.trim();
+
+        if (targetValue === -1) return;
+
+        if (noteMap[userRes] === targetValue) {
+
+            score++;
+
+            document.getElementById("feedback").innerText = "CORRECT! +1";
+
+            document.getElementById("feedback").style.color = "#48c774";
+
+            
+
+            if (score > highScore) {
+
+                highScore = score;
+
+                localStorage.setItem('scaleHighScore', highScore);
+
+                document.getElementById('high-score').innerText = highScore;
+
+            }
+
+            updateScore();
+
+            setTimeout(nuovaDomanda, 1000);
+
+        } else {
+
+            score = 0;
+
+            updateScore();
+
+            document.getElementById("feedback").innerText = "GAME OVER! Streak Reset";
+
+            document.getElementById("feedback").style.color = "#f14668";
+
+        }
+
+    }
+
+    function updateScore() {
+
+        document.getElementById('current-score').innerText = score;
+
+    }
+
+    document.getElementById("btnGenera").addEventListener("click", nuovaDomanda);
+
+    document.getElementById("btnCheck").addEventListener("click", verifica);
+
+    document.getElementById("risposta").addEventListener("keypress", (e) => { if (e.key === "Enter") verifica(); });
+
+</script>
+
+</body>
+
+</html>
+    
+  </body>
+  
+</html>
