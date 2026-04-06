@@ -3,101 +3,98 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Music Theory Master</title>
+    <title>Music Master Pro</title>
     <style>
         :root { --bg: #121212; --card: #1e1e1e; --primary: #00d1b2; --accent: #3298dc; --text: #f0f0f0; }
+        * { box-sizing: border-box; }
         body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); margin: 0; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
         
         /* Navigazione */
-        nav { display: flex; background: #222; border-bottom: 1px solid #333; height: 50px; }
-        nav button { flex: 1; background: none; border: none; color: #888; font-weight: bold; font-size: 14px; cursor: pointer; }
+        nav { display: flex; background: #222; border-bottom: 1px solid #333; min-height: 50px; z-index: 1000; }
+        nav button { flex: 1; background: none; border: none; color: #888; font-weight: bold; font-size: 13px; cursor: pointer; text-transform: uppercase; }
         nav button.active { color: var(--primary); border-bottom: 3px solid var(--primary); }
 
-        .page { display: none; flex-direction: column; flex: 1; padding: 10px; overflow-y: auto; }
+        .page { display: none; flex-direction: column; height: calc(100vh - 50px); width: 100%; }
         .page.active { display: flex; }
 
-        /* Common Styles */
-        .score-board { display: flex; justify-content: space-around; background: #2a2a2a; padding: 5px; border-radius: 8px; margin-bottom: 5px; }
+        /* Pagina Scale - Layout Anti-Taglio */
+        #page-scales { padding: 5px; display: none; flex-direction: column; justify-content: space-between; }
+        #page-scales.active { display: flex; }
+
+        .header-mini { background: #2a2a2a; padding: 5px; border-radius: 8px; display: flex; justify-content: space-around; font-size: 14px; margin-bottom: 5px; }
         .val { color: #ffdd57; font-weight: bold; }
-        
-        /* Scale Page Fix */
-        #timer-wrap { height: 4px; background: #333; margin-bottom: 10px; }
-        #timer-bar { height: 100%; background: var(--primary); width: 100%; }
-        
-        .controls { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px; }
-        select { background: #333; color: white; padding: 12px; border: 1px solid #444; border-radius: 8px; font-size: 16px; width: 100%; }
 
-        .display-area { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; min-height: 100px; }
-        #domanda { font-size: 2.5rem; font-weight: bold; margin: 0; }
+        .selection-area { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; margin-bottom: 5px; }
+        select { background: #333; color: white; padding: 10px; border: 1px solid #444; border-radius: 6px; font-size: 14px; }
 
-        .input-group { display: flex; flex-direction: column; gap: 8px; background: var(--card); padding: 10px; border-radius: 12px; }
-        input { padding: 15px; font-size: 18px; text-align: center; border-radius: 8px; border: none; }
+        .question-container { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 50px; }
+        #domanda { font-size: 2rem; font-weight: bold; margin: 0; color: white; }
+        #feedback { font-size: 14px; font-weight: bold; margin-top: 5px; height: 20px; }
+
+        .input-section { background: var(--card); padding: 10px; border-radius: 12px; margin-top: auto; }
+        input { width: 100%; padding: 12px; font-size: 18px; text-align: center; border-radius: 8px; border: none; margin-bottom: 8px; }
         .btn-row { display: flex; gap: 8px; }
-        .btn { flex: 1; padding: 15px; border-radius: 8px; border: none; font-weight: bold; color: white; }
+        .btn { flex: 1; padding: 12px; border-radius: 8px; border: none; font-weight: bold; color: white; text-transform: uppercase; }
         .btn-start { background: var(--primary); }
         .btn-check { background: var(--accent); }
 
-        /* Progressions Page */
-        .prog-card { background: #252525; padding: 15px; border-radius: 12px; margin-bottom: 15px; border-left: 4px solid var(--primary); }
-        .prog-title { font-weight: bold; color: var(--primary); margin-bottom: 5px; }
-        .prog-chords { font-size: 1.4rem; letter-spacing: 2px; margin: 10px 0; }
-        .prog-song { font-size: 0.9rem; font-style: italic; color: #aaa; }
+        /* Pagina Progressioni - Scroll Fisso */
+        #page-progs { padding: 15px; overflow-y: scroll; -webkit-overflow-scrolling: touch; }
+        .prog-card { background: #252525; padding: 15px; border-radius: 12px; margin-bottom: 12px; border-left: 4px solid var(--primary); box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
+        .prog-title { font-weight: bold; color: var(--primary); margin-bottom: 5px; font-size: 14px; }
+        .prog-chords { font-size: 1.3rem; letter-spacing: 1px; margin: 8px 0; font-weight: bold; color: #fff; }
+        .prog-song { font-size: 0.85rem; color: #999; line-height: 1.3; }
 
-        /* Piano */
-        #piano { display: flex; height: 40px; background: white; margin-top: 10px; border-radius: 4px; overflow: hidden; }
-        .key { flex: 1; border: 0.5px solid #000; position: relative; }
-        .key.black { background: #000; height: 60%; margin: 0 -2%; z-index: 2; }
-        .key.target-mark { background: #f14668 !important; }
+        /* Piano 3 Ottave */
+        #piano { display: flex; width: 100%; height: 35px; background: white; margin-top: 8px; border-radius: 2px; position: relative; }
+        .key { flex: 1; border: 0.2px solid rgba(0,0,0,0.2); position: relative; height: 100%; }
+        .key.black { background: #000; height: 60%; margin: 0 -1.5%; z-index: 2; border-radius: 0 0 2px 2px; }
+        .key.correct-mark { background: #48c774 !important; }
+        .key.wrong-mark { background: #f14668 !important; }
     </style>
 </head>
 <body>
 
 <nav>
-    <button id="tab-scales" class="active" onclick="showPage('scales')">SCALES QUIZ</button>
-    <button id="tab-progs" onclick="showPage('progs')">PROGRESSIONS</button>
+    <button id="tab-scales" class="active" onclick="showPage('scales')">Scales Quiz</button>
+    <button id="tab-progs" onclick="showPage('progs')">Progressions</button>
 </nav>
 
 <div id="page-scales" class="page active">
-    <div class="score-board">
+    <div class="header-mini">
         <span>Streak: <span id="cur" class="val">0</span></span>
         <span>Best: <span id="best" class="val">0</span></span>
     </div>
-    <div id="timer-wrap"><div id="timer-bar"></div></div>
 
-    <div class="controls">
+    <div class="selection-area">
         <select id="tonica"><option value="C">C</option><option value="C#">C#</option><option value="D">D</option><option value="Eb">Eb</option><option value="E">E</option><option value="F">F</option><option value="F#">F#</option><option value="G">G</option><option value="Ab">Ab</option><option value="A">A</option><option value="Bb">Bb</option><option value="B">B</option></select>
-        <select id="tipo"><option value="major">Major</option><option value="naturalMinor">Minor</option><option value="blues">Blues</option></select>
+        <select id="tipo"><option value="major">Major</option><option value="naturalMinor">Minor</option><option value="harmonicMinor">Harmonic</option><option value="blues">Blues</option></select>
     </div>
 
-    <div class="display-area">
-        <div id="domanda">Start!</div>
+    <div class="question-container">
+        <div id="domanda">Ready?</div>
         <div id="feedback"></div>
     </div>
 
-    <div class="input-group">
-        <input type="text" id="risposta" placeholder="Enter Note..." inputmode="text">
+    <div class="input-section">
+        <input type="text" id="risposta" placeholder="Type Note..." autocomplete="off" spellcheck="false">
         <div class="btn-row">
-            <button class="btn btn-start" onclick="nuovaDomanda()">NEW</button>
-            <button class="btn btn-check" onclick="verifica()">VERIFY</button>
+            <button class="btn btn-start" onclick="nuovaDomanda()">New</button>
+            <button class="btn btn-check" onclick="verifica()">Verify</button>
         </div>
+        <div id="piano"></div>
     </div>
-    <div id="piano"></div>
 </div>
 
 <div id="page-progs" class="page">
-    <h2 style="text-align:center; color:var(--primary)">Progression Finder</h2>
-    <p style="text-align:center; font-size: 0.8rem;">Select a Key to see common movements</p>
-    
-    <select id="prog-key" onchange="updateProgs()" style="margin-bottom: 20px;">
-        <option value="C">C Major</option><option value="G">G Major</option><option value="D">D Major</option><option value="A">A Major</option><option value="E">E Major</option><option value="F">F Major</option>
+    <h3 style="margin: 0 0 10px 0; color: var(--primary); text-align:center;">Progression Finder</h3>
+    <select id="prog-key" onchange="updateProgs()" style="width:100%; margin-bottom:15px;">
+        <option value="C">C Major</option><option value="G">G Major</option><option value="D">D Major</option><option value="A">A Major</option><option value="E">E Major</option><option value="F">F Major</option><option value="Bb">Bb Major</option>
     </select>
-
-    <div id="progs-container">
-        </div>
+    <div id="progs-container"></div>
 </div>
 
 <script>
-    // --- NAVIGAZIONE ---
     function showPage(id) {
         document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
         document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
@@ -105,19 +102,21 @@
         document.getElementById('tab-' + id).classList.add('active');
     }
 
-    // --- LOGICA SCALE ---
+    // --- SCALE LOGIC ---
     const noteMap = {"C":0,"C#":1,"Db":1,"D":2,"D#":3,"Eb":3,"E":4,"F":5,"F#":6,"Gb":6,"G":7,"G#":8,"Ab":8,"A":9,"A#":10,"Bb":10,"B":11};
-    const patterns = {major:[0,2,4,5,7,9,11], naturalMinor:[0,2,3,5,7,8,10], blues:[0,3,5,6,7,10]};
+    const patterns = {major:[0,2,4,5,7,9,11], naturalMinor:[0,2,3,5,7,8,10], harmonicMinor:[0,2,3,5,7,8,11], blues:[0,3,5,6,7,10]};
     let targetVal = -1, score = 0, best = localStorage.getItem('best') || 0;
     document.getElementById('best').innerText = best;
 
     function nuovaDomanda() {
+        resetPiano();
         const root = document.getElementById('tonica').value;
         const type = document.getElementById('tipo').value;
         const scale = patterns[type].map(v => (noteMap[root] + v) % 12);
         const idx = Math.floor(Math.random() * scale.length);
         targetVal = scale[idx];
         document.getElementById('domanda').innerText = "Degree " + (idx+1);
+        document.getElementById('feedback').innerText = "";
         document.getElementById('risposta').value = "";
         document.getElementById('risposta').focus();
     }
@@ -127,50 +126,60 @@
         if(noteMap[ans] === targetVal) {
             score++;
             document.getElementById('feedback').innerText = "CORRECT! ✅";
+            document.getElementById('feedback').style.color = "#48c774";
             if(score > best) { best = score; localStorage.setItem('best', best); document.getElementById('best').innerText = best; }
             document.getElementById('cur').innerText = score;
             setTimeout(nuovaDomanda, 1000);
         } else {
             score = 0; document.getElementById('cur').innerText = 0;
             document.getElementById('feedback').innerText = "WRONG! ❌";
+            document.getElementById('feedback').style.color = "#f14668";
+            markPiano(targetVal);
         }
     }
 
-    // --- LOGICA PROGRESSIONI ---
+    // --- PROGRESSIONS LOGIC ---
     const progLibrary = [
-        { name: "Pop Standard (I-V-vi-IV)", steps: [0, 7, 9, 5], song: "Let It Be, Despacito, With or Without You" },
-        { name: "Jazz 2-5-1 (ii-V-I)", steps: [2, 7, 0], song: "Autumn Leaves, All The Things You Are" },
-        { name: "The 50s Doo-Wop (I-vi-IV-V)", steps: [0, 9, 5, 7], song: "Stand By Me, Every Breath You Take" },
-        { name: "Emotional (vi-IV-I-V)", steps: [9, 5, 0, 7], song: "Apologize, Numb (Linkin Park)" }
+        { name: "Pop Standard (I-V-vi-IV)", steps: [0, 7, 9, 5], song: "Let It Be (Beatles), Despacito, With or Without You (U2)" },
+        { name: "Jazz 2-5-1 (ii-V-I)", steps: [2, 7, 0], song: "Autumn Leaves, All The Things You Are, Summertime" },
+        { name: "The 50s Doo-Wop (I-vi-IV-V)", steps: [0, 9, 5, 7], song: "Stand By Me, Every Breath You Take, Blue Moon" },
+        { name: "Emotional / Epic (vi-IV-I-V)", steps: [9, 5, 0, 7], song: "Apologize (OneRepublic), Numb (Linkin Park), Africa (Toto)" },
+        { name: "Blues Standard (I-IV-V)", steps: [0, 5, 7], song: "Johnny B. Goode, Rock Around the Clock" }
     ];
-
     const valToNote = ["C","C#","D","Eb","E","F","F#","G","Ab","A","Bb","B"];
 
     function updateProgs() {
         const rootVal = noteMap[document.getElementById('prog-key').value];
         const container = document.getElementById('progs-container');
         container.innerHTML = "";
-
         progLibrary.forEach(p => {
             const chords = p.steps.map(s => valToNote[(rootVal + s) % 12]);
-            container.innerHTML += `
-                <div class="prog-card">
-                    <div class="prog-title">${p.name}</div>
-                    <div class="prog-chords">${chords.join(" - ")}</div>
-                    <div class="prog-song">Songs: ${p.song}</div>
-                </div>
-            `;
+            container.innerHTML += `<div class="prog-card"><div class="prog-title">${p.name}</div><div class="prog-chords">${chords.join(" - ")}</div><div class="prog-song">Ex: ${p.song}</div></div>`;
         });
     }
-    updateProgs(); // Carica inizialmente
 
-    // Genera Piano semplice (1 ottava)
-    const piano = document.getElementById('piano');
-    for(let i=0; i<12; i++) {
-        const k = document.createElement('div');
-        k.className = [1,3,6,8,10].includes(i) ? 'key black' : 'key';
-        piano.appendChild(k);
+    // --- PIANO GENERATION (3 Octaves) ---
+    function initPiano() {
+        const piano = document.getElementById('piano');
+        piano.innerHTML = "";
+        for(let oct=0; oct<3; oct++) {
+            for(let i=0; i<12; i++) {
+                const k = document.createElement('div');
+                k.className = [1,3,6,8,10].includes(i) ? 'key black' : 'key';
+                k.dataset.note = i;
+                piano.appendChild(k);
+            }
+        }
     }
+    function markPiano(val) {
+        document.querySelectorAll(`.key[data-note="${val}"]`).forEach(k => k.classList.add('wrong-mark'));
+    }
+    function resetPiano() {
+        document.querySelectorAll('.key').forEach(k => k.classList.remove('wrong-mark', 'correct-mark'));
+    }
+
+    initPiano();
+    updateProgs();
 </script>
 </body>
 </html>
