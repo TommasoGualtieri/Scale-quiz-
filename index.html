@@ -3,60 +3,58 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, interactive-widget=resizes-content">
-    <title>Scale Master PRO - 2 Octaves</title>
+    <title>Scale Master ULTRA - 3 Octaves</title>
     <link rel="icon" type="image/png" href="icon.png">
     <style>
-        :root { --bg-color: #121212; --container-color: #1e1e1e; --primary-color: #00d1b2; --accent-color: #3298dc; --correct-color: #48c774; --wrong-color: #f14668; --text-color: #f0f0f0; --piano-height: 40px; /* Ridotta altezza */ }
+        :root { --bg-color: #121212; --container-color: #1e1e1e; --primary-color: #00d1b2; --accent-color: #3298dc; --correct-color: #48c774; --wrong-color: #f14668; --text-color: #f0f0f0; --piano-height: 45px; /* Altezza tastiera */ }
         body { font-family: 'Poppins', 'Segoe UI', sans-serif; background: var(--bg-color); color: var(--text-color); margin: 0; padding: 0; min-height: 100vh; overflow: hidden; display: flex; flex-direction: column; touch-action: manipulation; }
         
-        /* HEADER (Sticky) */
-        #main-header { position: sticky; top: 0; background: var(--bg-color); padding: 5px; z-index: 100; text-align: center; border-bottom: 1px solid #333; }
-        h1 { color: white; margin: 0; font-size: 14px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; }
-        h1 span { color: var(--primary-color); }
-        .score-board { display: flex; justify-content: space-around; background: #2a2a2a; padding: 4px; border-radius: 6px; margin: 4px; }
-        .score-val { font-size: 18px; font-weight: bold; color: #ffdd57; }
-        .score-label { font-size: 0.55rem; text-transform: uppercase; color: #aaa; }
+        /* HEADER (Più Compatto) */
+        #main-header { position: sticky; top: 0; background: var(--bg-color); padding: 3px; z-index: 100; text-align: center; border-bottom: 1px solid #333; }
+        h1 { color: white; margin: 0; font-size: 12px; font-weight: normal; text-transform: uppercase; letter-spacing: 1px; }
+        h1 span { color: var(--primary-color); font-weight: bold; }
+        .score-board { display: flex; justify-content: space-around; background: #2a2a2a; padding: 3px; border-radius: 5px; margin: 3px; }
+        .score-val { font-size: 16px; font-weight: bold; color: #ffdd57; }
+        .score-label { font-size: 0.5rem; text-transform: uppercase; color: #aaa; }
         #timer-container { width: calc(100% - 10px); height: 3px; background: #333; border-radius: 2px; margin: 0 5px; overflow: hidden; }
         #timer-bar { width: 100%; height: 100%; background: linear-gradient(to right, #ffdd57, #ff9f43); transition: width 0.1s linear; }
 
-        /* SCALA INFO (Sticky) */
-        #info-scala { position: sticky; top: 55px; background: #1a1a1a; padding: 4px; text-align: center; border-top: 1px solid #333; border-bottom: 1px solid #333; z-index: 90; font-size: 0.9rem; color: var(--primary-color); font-weight: bold; text-transform: uppercase; display: flex; justify-content: center; gap: 6px; align-items: center; }
-        #info-scala select { background: transparent; color: inherit; border: none; font-size: inherit; font-weight: inherit; appearance: none; -webkit-appearance: none; cursor: pointer; text-transform: uppercase; padding: 0; margin: 0; }
+        /* SCALA INFO (Allargata e Gigante) */
+        #info-scala { position: sticky; top: 45px; background: #1a1a1a; padding: 10px 5px; text-align: center; border-top: 1px solid #333; border-bottom: 1px solid #333; z-index: 90; font-size: 1.4rem; /* Testo Gigante */ color: var(--primary-color); font-weight: bold; text-transform: uppercase; display: flex; justify-content: center; gap: 10px; align-items: center; }
+        #info-scala select { background: #333; color: inherit; border: 1px solid #555; font-size: inherit; font-weight: inherit; appearance: none; -webkit-appearance: none; cursor: pointer; text-transform: uppercase; padding: 5px 10px; border-radius: 8px; }
 
-        /* DOMANDA AREA */
-        #domanda-box { flex-grow: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 15px 10px; margin-bottom: 100px; /* Spazio per controlli e tastiera */ }
-        #domanda { font-size: 1.8rem; color: white; font-weight: bold; margin: 0 0 8px 0; }
-        #feedback { font-weight: bold; margin-top: 8px; min-height: 18px; font-size: 0.9rem; }
+        /* DOMANDA AREA (Centrale e Focus) */
+        #domanda-box { flex-grow: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 10px; margin-bottom: 130px; /* Spazio per controlli e tastiera */ }
+        #domanda { font-size: 2.5rem; color: white; font-weight: bold; margin: 0 0 5px 0; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
+        #feedback { font-weight: bold; margin-top: 5px; min-height: 20px; font-size: 1rem; }
 
-        /* CONTROLLI (Sticky Bottom) */
-        #controls-container { position: absolute; bottom: calc(var(--piano-height) + 8px); left: 0; right: 0; padding: 0 8px; display: flex; flex-direction: column; gap: 4px; z-index: 80; }
-        #button-row { display: flex; gap: 4px; }
-        #risposta { background-color: white; color: black; font-weight: bold; text-align: center; border: 1px solid #555; font-size: 14px; padding: 8px; border-radius: 6px; width: 100%; box-sizing: border-box; }
-        .mode-switch { background: #333; padding: 4px; border-radius: 6px; display: flex; align-items: center; justify-content: center; gap: 6px; font-size: 0.75rem; color: #aaa; }
-        button { flex: 1; padding: 8px; border-radius: 6px; font-size: 12px; font-weight: bold; border: none; cursor: pointer; color: white; transition: background 0.2s; text-transform: uppercase; }
+        /* CONTROLLI (Sticky Bottom e Allargati) */
+        #controls-container { position: absolute; bottom: calc(var(--piano-height) + 10px); left: 0; right: 0; padding: 0 10px; display: flex; flex-direction: column; gap: 6px; z-index: 80; }
+        #button-row { display: flex; gap: 6px; }
+        #risposta { background-color: white; color: black; font-weight: bold; text-align: center; border: 2px solid #555; font-size: 18px; padding: 12px; border-radius: 10px; width: 100%; box-sizing: border-box; }
+        .mode-switch { background: #333; padding: 5px; border-radius: 8px; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 0.8rem; color: #aaa; }
+        button { flex: 1; padding: 15px; /* Più Alti */ border-radius: 10px; font-size: 14px; font-weight: bold; border: none; cursor: pointer; color: white; transition: background 0.2s; text-transform: uppercase; }
         #btnCheck { background: var(--accent-color); }
         #btnGenera { background: var(--primary-color); }
         
         /* Toggle Switch Style */
-        .switch { position: relative; display: inline-block; width: 30px; height: 16px; }
+        .switch { position: relative; display: inline-block; width: 34px; height: 18px; }
         .switch input { opacity: 0; width: 0; height: 0; }
         .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #555; transition: .4s; border-radius: 20px; }
-        .slider:before { position: absolute; content: ""; height: 10px; width: 10px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
+        .slider:before { position: absolute; content: ""; height: 12px; width: 12px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
         input:checked + .slider { background-color: var(--primary-color); }
-        input:checked + .slider:before { transform: translateX(14px); }
+        input:checked + .slider:before { transform: translateX(16px); }
 
-        /* PIANO (Fixed Bottom) - 2 Ottave */
+        /* PIANO (Fixed Bottom) - 3 Ottave (36 tasti) */
         #piano-container { position: fixed; bottom: 0; left: 0; right: 0; width: 100%; height: var(--piano-height); display: flex; background: transparent; z-index: 100; border-top: 1px solid #333; }
         .key { flex: 1; height: 100%; border: 1px solid #ccc; background: white; border-radius: 0 0 2px 2px; position: relative; cursor: pointer; box-sizing: border-box; }
-        .key.black { background: #333; border-color: #111; height: 60%; margin-left: -3%; margin-right: -3%; z-index: 2; border-radius: 0 0 1px 1px; }
+        .key.black { background: #333; border-color: #111; height: 60%; margin-left: -2.5%; margin-right: -2.5%; z-index: 2; border-radius: 0 0 1px 1px; }
         /* Feedback colori */
         .key.correct-flash { background-color: var(--correct-color) !important; animation: flashGreen 0.4s ease-in-out; }
-        .key.target-mark { background-color: var(--wrong-color) !important; border-color: var(--wrong-color) !important; }
+        .key.target-mark { background-color: var(--wrong-color) !important; border-color: var(--wrong-color) !important; z-index: 3; /* Sopra tutto */ }
 
         @keyframes flashGreen { 0%, 100% { background-color: white; } 50% { background-color: var(--correct-color); } }
         @keyframes flashGreenBlack { 0%, 100% { background-color: #333; } 50% { background-color: var(--correct-color); } }
-        
-        /* Correzione lampeggio tasti neri */
         .key.black.correct-flash { animation: flashGreenBlack 0.4s ease-in-out; }
 
     </style>
@@ -64,7 +62,7 @@
 <body>
 
     <div id="main-header">
-        <h1>Scale Master <span>Identify the Notes</span></h1>
+        <h1>Scale <span>Master</span></h1>
         <div class="score-board">
             <div class="score-box">
                 <span id="current-score" class="score-val">0</span>
@@ -83,7 +81,7 @@
             <option value="C">C</option><option value="C#">C# / Db</option><option value="D">D</option><option value="D#">D# / Eb</option><option value="E">E</option><option value="F">F</option><option value="F#">F# / Gb</option><option value="G">G</option><option value="G#">G# / Ab</option><option value="A">A</option><option value="A#">A# / Bb</option><option value="B">B</option>
         </select>
         <select id="tipo">
-            <option value="major">Major Scale</option><option value="naturalMinor">Natural Minor</option><option value="harmonicMinor">Harmonic Minor</option><option value="pentatonicMinor">Pentatonic Minor</option><option value="blues">Blues Scale</option>
+            <option value="major">Major</option><option value="naturalMinor">Natural Minor</option><option value="harmonicMinor">Harmonic Minor</option><option value="pentatonicMinor">Pentatonic Minor</option><option value="blues">Blues</option>
         </select>
     </div>
 
@@ -107,6 +105,7 @@
     <div id="piano-container">
         <div class="key" data-note="C" data-octave="1"></div><div class="key black" data-note="C#" data-octave="1"></div><div class="key" data-note="D" data-octave="1"></div><div class="key black" data-note="D#" data-octave="1"></div><div class="key" data-note="E" data-octave="1"></div><div class="key" data-note="F" data-octave="1"></div><div class="key black" data-note="F#" data-octave="1"></div><div class="key" data-note="G" data-octave="1"></div><div class="key black" data-note="G#" data-octave="1"></div><div class="key" data-note="A" data-octave="1"></div><div class="key black" data-note="A#" data-octave="1"></div><div class="key" data-note="B" data-octave="1"></div>
         <div class="key" data-note="C" data-octave="2"></div><div class="key black" data-note="C#" data-octave="2"></div><div class="key" data-note="D" data-octave="2"></div><div class="key black" data-note="D#" data-octave="2"></div><div class="key" data-note="E" data-octave="2"></div><div class="key" data-note="F" data-octave="2"></div><div class="key black" data-note="F#" data-octave="2"></div><div class="key" data-note="G" data-octave="2"></div><div class="key black" data-note="G#" data-octave="2"></div><div class="key" data-note="A" data-octave="2"></div><div class="key black" data-note="A#" data-octave="2"></div><div class="key" data-note="B" data-octave="2"></div>
+        <div class="key" data-note="C" data-octave="3"></div><div class="key black" data-note="C#" data-octave="3"></div><div class="key" data-note="D" data-octave="3"></div><div class="key black" data-note="D#" data-octave="3"></div><div class="key" data-note="E" data-octave="3"></div><div class="key" data-note="F" data-octave="3"></div><div class="key black" data-note="F#" data-octave="3"></div><div class="key" data-note="G" data-octave="3"></div><div class="key black" data-note="G#" data-octave="3"></div><div class="key" data-note="A" data-octave="3"></div><div class="key black" data-note="A#" data-octave="3"></div><div class="key" data-note="B" data-octave="3"></div>
     </div>
 
 <script>
@@ -122,8 +121,6 @@
     function playSound(f,t,d=0.3){const o=audioCtx.createOscillator();const g=audioCtx.createGain();o.type=t;o.frequency.value=f;g.gain.setValueAtTime(0.05,audioCtx.currentTime);g.gain.exponentialRampToValueAtTime(0.0001,audioCtx.currentTime+d);o.connect(g);g.connect(audioCtx.destination);o.start();o.stop(audioCtx.currentTime+d);}
 
     function resetPiano() { document.querySelectorAll('.key').forEach(k => k.classList.remove('target-mark', 'correct-flash')); }
-    
-    // Funzione per evidenziare la nota (su entrambe le ottave per semplicità visiva)
     function highlightPiano(val, cls) { 
         const noteName = valToNote[val];
         const keys = document.querySelectorAll(`.key[data-note="${noteName}"]`);
@@ -133,7 +130,7 @@
     function startTimer() {
         clearInterval(timerInterval); timeLeft = 100;
         timerInterval = setInterval(() => {
-            timeLeft -= 2.0; // Velocità timer leggermente aumentata
+            timeLeft -= 2.0; 
             document.getElementById("timer-bar").style.width = timeLeft + "%";
             if (timeLeft <= 0) { gameOver("TIME EXPIRED!"); }
         }, 150);
@@ -177,10 +174,10 @@
             score++; playSound(880,'sine');
             document.getElementById("feedback").innerText = "CORRECT! ✅";
             document.getElementById("feedback").style.color = "#48c774";
-            highlightPiano(targetValue, 'correct-flash'); // Lampeggia in VERDE
+            highlightPiano(targetValue, 'correct-flash');
             if (score > highScore) { highScore = score; localStorage.setItem('scaleHighScore', highScore); document.getElementById('high-score').innerText = highScore; }
             document.getElementById('current-score').innerText = score;
-            setTimeout(nuovaDomanda, 1000); // Pausa leggermente più lunga per vedere il feedback
+            setTimeout(nuovaDomanda, 1000);
         } else {
             gameOver("WRONG!");
         }
@@ -193,7 +190,7 @@
         document.getElementById("feedback").innerText = msg;
         document.getElementById("feedback").style.color = "#f14668";
         document.getElementById("timer-bar").style.width = "0%";
-        highlightPiano(targetValue, 'target-mark'); // Segna in ROSSO la nota corretta
+        highlightPiano(targetValue, 'target-mark'); 
     }
 
     document.getElementById("btnGenera").addEventListener("click", nuovaDomanda);
