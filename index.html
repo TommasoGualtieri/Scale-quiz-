@@ -2,193 +2,195 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Music Master Pro</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, interactive-widget=resizes-content">
+    <title>Scale Master Challenge PRO - Fixed Layout</title>
+    <link rel="icon" type="image/png" href="icon.png">
     <style>
-        :root { --bg: #121212; --card: #1e1e1e; --primary: #00d1b2; --accent: #3298dc; --text: #f0f0f0; }
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        :root { --bg-color: #121212; --container-color: #1e1e1e; --primary-color: #00d1b2; --accent-color: #3298dc; --correct-color: #48c774; --wrong-color: #f14668; --text-color: #f0f0f0; --piano-height: 50px; }
+        body { font-family: 'Poppins', 'Segoe UI', sans-serif; background: var(--bg-color); color: var(--text-color); margin: 0; padding: 0; min-height: 100vh; overflow: hidden; display: flex; flex-direction: column; touch-action: manipulation; }
         
-        html, body { 
-            height: 100%; 
-            margin: 0; 
-            padding: 0; 
-            background: var(--bg); 
-            color: var(--text); 
-            font-family: sans-serif; 
-            overflow: hidden; /* Evita scroll della pagina intera */
-        }
+        /* HEADER (Sticky) */
+        #main-header { position: sticky; top: 0; background: var(--bg-color); padding: 5px; z-index: 100; text-align: center; border-bottom: 1px solid #333; }
+        h1 { color: white; margin: 0; font-size: 16px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; }
+        h1 span { color: var(--primary-color); }
+        .score-board { display: flex; justify-content: space-around; background: #2a2a2a; padding: 6px; border-radius: 8px; margin: 5px; }
+        .score-val { font-size: 20px; font-weight: bold; color: #ffdd57; }
+        .score-label { font-size: 0.6rem; text-transform: uppercase; color: #aaa; }
+        #timer-container { width: calc(100% - 10px); height: 4px; background: #333; border-radius: 2px; margin: 0 5px; overflow: hidden; }
+        #timer-bar { width: 100%; height: 100%; background: linear-gradient(to right, #ffdd57, #ff9f43); transition: width 0.1s linear; }
 
-        /* Navigazione */
-        nav { display: flex; background: #222; border-bottom: 1px solid #333; height: 45px; flex-shrink: 0; }
-        nav button { flex: 1; background: none; border: none; color: #888; font-weight: bold; font-size: 12px; cursor: pointer; text-transform: uppercase; }
-        nav button.active { color: var(--primary); border-bottom: 3px solid var(--primary); }
+        /* SCALA INFO (Sticky) */
+        #info-scala { position: sticky; top: 60px; /* Sotto l'header */ background: #1a1a1a; padding: 5px; text-align: center; border-top: 1px solid #333; border-bottom: 1px solid #333; z-index: 90; font-size: 1rem; color: var(--primary-color); font-weight: bold; text-transform: uppercase; display: flex; justify-content: center; gap: 8px; align-items: center; }
+        #info-scala select { background: transparent; color: inherit; border: none; font-size: inherit; font-weight: inherit; appearance: none; -webkit-appearance: none; cursor: pointer; text-transform: uppercase; }
 
-        /* Contenitore Pagine */
-        #content { flex: 1; position: relative; height: calc(100% - 45px); }
-        .page { display: none; height: 100%; width: 100%; flex-direction: column; }
-        .page.active { display: flex; }
+        /* DOMANDA AREA */
+        #domanda-box { flex-grow: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 20px 10px; margin-bottom: 120px; /* Spazio per tastiera */ }
+        #domanda { font-size: 2rem; color: white; font-weight: bold; margin: 0 0 10px 0; }
+        #feedback { font-weight: bold; margin-top: 10px; min-height: 20px; font-size: 1rem; }
 
-        /* --- PAGINA SCALE --- */
-        #page-scales { padding: 8px; justify-content: space-between; }
+        /* CONTROLLI (Sticky Bottom) */
+        #controls-container { position: absolute; bottom: calc(var(--piano-height) + 10px); left: 0; right: 0; padding: 0 10px; display: flex; flex-direction: column; gap: 5px; z-index: 80; }
+        #button-row { display: flex; gap: 5px; }
+        #risposta { background-color: white; color: black; font-weight: bold; text-align: center; border: 1px solid #555; font-size: 16px; padding: 10px; border-radius: 8px; width: 100%; box-sizing: border-box; }
+        .mode-switch { background: #333; padding: 6px; border-radius: 8px; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 0.8rem; color: #aaa; }
+        button { flex: 1; padding: 10px; border-radius: 8px; font-size: 14px; font-weight: bold; border: none; cursor: pointer; color: white; transition: background 0.2s; }
+        #btnCheck { background: var(--accent-color); }
+        #btnGenera { background: var(--primary-color); }
         
-        .header-stats { display: flex; justify-content: space-around; background: #2a2a2a; padding: 5px; border-radius: 8px; font-size: 13px; margin-bottom: 8px; }
-        .val { color: #ffdd57; font-weight: bold; }
+        /* Toggle Switch Style */
+        .switch { position: relative; display: inline-block; width: 34px; height: 18px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #555; transition: .4s; border-radius: 20px; }
+        .slider:before { position: absolute; content: ""; height: 12px; width: 12px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
+        input:checked + .slider { background-color: var(--primary-color); }
+        input:checked + .slider:before { transform: translateX(16px); }
 
-        .selectors { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px; }
-        select { background: #333; color: white; padding: 10px; border: 1px solid #444; border-radius: 8px; font-size: 15px; width: 100%; }
+        /* PIANO (Sticky Bottom) */
+        #piano-container { position: fixed; bottom: 0; left: 0; right: 0; width: 100%; height: var(--piano-height); display: flex; background: transparent; z-index: 100; }
+        .key { flex: 1; height: 100%; border: 1px solid #ccc; background: white; border-radius: 0 0 3px 3px; position: relative; cursor: pointer; }
+        .key.black { background: #333; border-color: #111; height: 60%; margin-left: -6%; margin-right: -6%; z-index: 2; border-radius: 0 0 2px 2px; }
+        .key.correct { background-color: var(--correct-color) !important; }
+        .key.target { background-color: var(--wrong-color) !important; animation: shake 0.3s; }
+        @keyframes shake { 0% { transform: translateX(0); } 25% { transform: translateX(-2px); } 50% { transform: translateX(2px); } 75% { transform: translateX(-2px); } 100% { transform: translateX(0); } }
 
-        .question-zone { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; }
-        #domanda { font-size: 2.2rem; font-weight: bold; margin: 0; }
-        #feedback { font-size: 14px; margin-top: 5px; font-weight: bold; min-height: 18px; }
-
-        .input-zone { background: var(--card); padding: 10px; border-radius: 12px; width: 100%; }
-        input { width: 100%; padding: 12px; font-size: 18px; text-align: center; border-radius: 8px; border: 2px solid #444; margin-bottom: 8px; background: white; color: black; }
-        
-        .btn-row { display: flex; gap: 8px; margin-bottom: 8px; }
-        .btn { flex: 1; padding: 14px; border-radius: 8px; border: none; font-weight: bold; color: white; text-transform: uppercase; font-size: 14px; }
-        .btn-start { background: var(--primary); }
-        .btn-check { background: var(--accent); }
-
-        /* Piano 3 Ottave Compatto */
-        #piano { display: flex; width: 100%; height: 30px; background: white; border-radius: 2px; position: relative; }
-        .key { flex: 1; border: 0.1px solid rgba(0,0,0,0.1); height: 100%; }
-        .key.black { background: #000; height: 60%; margin: 0 -1.5%; z-index: 2; }
-        .key.mark-correct { background: #48c774 !important; }
-        .key.mark-wrong { background: #f14668 !important; }
-
-        /* --- PAGINA PROGRESSIONI --- */
-        #page-progs { padding: 10px; overflow-y: auto !important; -webkit-overflow-scrolling: touch; }
-        .prog-card { background: #252525; padding: 12px; border-radius: 10px; margin-bottom: 10px; border-left: 4px solid var(--primary); }
-        .prog-title { font-weight: bold; color: var(--primary); font-size: 13px; margin-bottom: 5px; }
-        .prog-chords { font-size: 1.4rem; font-weight: bold; color: #fff; margin-bottom: 5px; }
-        .prog-song { font-size: 0.8rem; color: #aaa; }
     </style>
 </head>
 <body>
 
-<nav>
-    <button id="btn-scales" class="active" onclick="switchPage('scales')">Scales Quiz</button>
-    <button id="btn-progs" onclick="switchPage('progs')">Progressions</button>
-</nav>
-
-<div id="content">
-    <div id="page-scales" class="page active">
-        <div class="header-stats">
-            <span>Streak: <span id="cur" class="val">0</span></span>
-            <span>Best: <span id="best" class="val">0</span></span>
-        </div>
-
-        <div class="selectors">
-            <select id="tonica">
-                <option value="C">C</option><option value="C#">C#</option><option value="D">D</option><option value="Eb">Eb</option>
-                <option value="E">E</option><option value="F">F</option><option value="F#">F#</option><option value="G">G</option>
-                <option value="Ab">Ab</option><option value="A">A</option><option value="Bb">Bb</option><option value="B">B</option>
-            </select>
-            <select id="tipo">
-                <option value="major">Major</option><option value="naturalMinor">Minor</option>
-                <option value="harmonicMinor">Harmonic</option><option value="blues">Blues</option>
-            </select>
-        </div>
-
-        <div class="question-zone">
-            <div id="domanda">READY?</div>
-            <div id="feedback"></div>
-        </div>
-
-        <div class="input-zone">
-            <input type="text" id="risposta" placeholder="Type Note..." autocomplete="off">
-            <div class="btn-row">
-                <button class="btn btn-start" onclick="nuovaDomanda()">START</button>
-                <button class="btn btn-check" onclick="verifica()">VERIFY</button>
+    <div id="main-header">
+        <h1>Scale Master <span>Identify the Notes</span></h1>
+        <div class="score-board">
+            <div class="score-box">
+                <span id="current-score" class="score-val">0</span>
+                <span class="score-label">Streak</span>
             </div>
-            <div id="piano"></div>
+            <div class="score-box">
+                <span id="high-score" class="score-val">0</span>
+                <span class="score-label">Best</span>
+            </div>
+        </div>
+        <div id="timer-container"><div id="timer-bar"></div></div>
+    </div>
+
+    <div id="info-scala">
+        <select id="tonica">
+            <option value="C">C</option><option value="C#">C# / Db</option><option value="D">D</option><option value="D#">D# / Eb</option><option value="E">E</option><option value="F">F</option><option value="F#">F# / Gb</option><option value="G">G</option><option value="G#">G# / Ab</option><option value="A">A</option><option value="A#">A# / Bb</option><option value="B">B</option>
+        </select>
+        <select id="tipo">
+            <option value="major">Major Scale</option><option value="naturalMinor">Natural Minor</option><option value="harmonicMinor">Harmonic Minor</option><option value="pentatonicMinor">Pentatonic Minor</option><option value="blues">Blues Scale</option>
+        </select>
+    </div>
+
+    <div id="domanda-box">
+        <div id="domanda">Degree 1</div>
+        <div id="feedback"></div>
+    </div>
+    
+    <div id="controls-container">
+        <input type="text" id="risposta" placeholder="e.g. F#" autocomplete="off" spellcheck="false" inputmode="text">
+        <div id="button-row">
+            <button id="btnGenera">START / NEW</button>
+            <button id="btnCheck">VERIFY</button>
+        </div>
+        <div class="mode-switch">
+            <span>Random Mode</span>
+            <label class="switch"><input type="checkbox" id="random-mode"><span class="slider"></span></label>
         </div>
     </div>
 
-    <div id="page-progs" class="page">
-        <h3 style="text-align:center; margin: 10px 0; color: var(--primary)">Progression Finder</h3>
-        <select id="prog-key" onchange="genProgs()" style="margin-bottom: 15px;">
-            <option value="C">C Major</option><option value="G">G Major</option><option value="D">D Major</option>
-            <option value="A">A Major</option><option value="E">E Major</option><option value="F">F Major</option>
-            <option value="Bb">Bb Major</option>
-        </select>
-        <div id="progs-list"></div>
-        <div style="height: 50px;"></div> </div>
-</div>
+    <div id="piano-container">
+        <div class="key" data-note="C"></div><div class="key black" data-note="C#"></div><div class="key" data-note="D"></div><div class="key black" data-note="D#"></div><div class="key" data-note="E"></div><div class="key" data-note="F"></div><div class="key black" data-note="F#"></div><div class="key" data-note="G"></div><div class="key black" data-note="G#"></div><div class="key" data-note="A"></div><div class="key black" data-note="A#"></div><div class="key" data-note="B"></div>
+    </div>
 
 <script>
-    function switchPage(p) {
-        document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
-        document.querySelectorAll('nav button').forEach(btn => btn.classList.remove('active'));
-        document.getElementById('page-' + p).classList.add('active');
-        document.getElementById('btn-' + p).classList.add('active');
+    const noteMap = { "C": 0, "C#": 1, "DB": 1, "D": 2, "D#": 3, "EB": 3, "E": 4, "F": 5, "F#": 6, "GB": 6, "G": 7, "G#": 8, "AB": 8, "A": 9, "A#": 10, "BB": 10, "B": 11 };
+    const valToNote = { 0: "C", 1: "C#", 2: "D", 3: "D#", 4: "E", 5: "F", 6: "F#", 7: "G", 8: "G#", 9: "A", 10: "A#", 11: "B" };
+    const patterns = { major:[0,2,4,5,7,9,11], naturalMinor:[0,2,3,5,7,8,10], harmonicMinor:[0,2,3,5,7,8,11], pentatonicMinor:[0,3,5,7,10], blues:[0,3,5,6,7,10] };
+
+    let targetValue = -1, score = 0, timeLeft = 100, timerInterval = null, isRandomMode = false;
+    let highScore = localStorage.getItem('scaleHighScore') || 0;
+    document.getElementById('high-score').innerText = highScore;
+
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    function playSound(f,t,d=0.3){const o=audioCtx.createOscillator();const g=audioCtx.createGain();o.type=t;o.frequency.value=f;g.gain.setValueAtTime(0.05,audioCtx.currentTime);g.gain.exponentialRampToValueAtTime(0.0001,audioCtx.currentTime+d);o.connect(g);g.connect(audioCtx.destination);o.start();o.stop(audioCtx.currentTime+d);}
+
+    function resetPiano() { document.querySelectorAll('.key').forEach(k => k.classList.remove('target', 'correct')); }
+    function highlightPiano(val, cls) { 
+        const noteName = valToNote[val];
+        const key = document.querySelector(`.key[data-note="${noteName}"]`);
+        if (key) key.classList.add(cls);
     }
 
-    // SCALE LOGIC
-    const nMap = {"C":0,"C#":1,"Db":1,"D":2,"D#":3,"Eb":3,"E":4,"F":5,"F#":6,"Gb":6,"G":7,"G#":8,"Ab":8,"A":9,"A#":10,"Bb":10,"B":11};
-    const pats = {major:[0,2,4,5,7,9,11], naturalMinor:[0,2,3,5,7,8,10], harmonicMinor:[0,2,3,5,7,8,11], blues:[0,3,5,6,7,10]};
-    let target = -1, score = 0, high = localStorage.getItem('best') || 0;
-    document.getElementById('best').innerText = high;
+    function startTimer() {
+        clearInterval(timerInterval); timeLeft = 100;
+        timerInterval = setInterval(() => {
+            timeLeft -= 1.8;
+            document.getElementById("timer-bar").style.width = timeLeft + "%";
+            if (timeLeft <= 0) { gameOver("TIME EXPIRED!"); }
+        }, 150);
+    }
 
     function nuovaDomanda() {
-        document.querySelectorAll('.key').forEach(k => k.classList.remove('mark-wrong'));
-        const r = document.getElementById('tonica').value;
-        const t = document.getElementById('tipo').value;
-        const sc = pats[t].map(v => (nMap[r] + v) % 12);
-        const idx = Math.floor(Math.random() * sc.length);
-        target = sc[idx];
-        document.getElementById('domanda').innerText = "Degree " + (idx+1);
-        document.getElementById('feedback').innerText = "";
-        document.getElementById('risposta').value = "";
-        document.getElementById('risposta').focus();
+        resetPiano();
+        isRandomMode = document.getElementById("random-mode").checked;
+        let root, type;
+
+        if (isRandomMode) {
+            const keys = ["C","C#","D","D#","E","F","F#","G","G#","A","A#","B"];
+            root = keys[Math.floor(Math.random()*12)];
+            type = Object.keys(patterns)[Math.floor(Math.random()*5)];
+            
+            // Aggiorna i selettori per mostrare la scala casuale
+            document.getElementById("tonica").value = root;
+            document.getElementById("tipo").value = type;
+        } else {
+            root = document.getElementById("tonica").value.split(" ")[0];
+            type = document.getElementById("tipo").value;
+        }
+
+        const currentScale = patterns[type].map(v => (noteMap[root.toUpperCase()] + v) % 12);
+        const randIdx = Math.floor(Math.random() * currentScale.length);
+        targetValue = currentScale[randIdx];
+
+        document.getElementById("domanda").innerText = `Degree ${randIdx + 1}`;
+        document.getElementById("feedback").innerText = "";
+        document.getElementById("feedback").style.color = "#eee"; // Reset color
+        document.getElementById("risposta").value = "";
+        document.getElementById("risposta").focus();
+        startTimer();
     }
 
     function verifica() {
-        const a = document.getElementById('risposta').value.trim().toUpperCase();
-        if(nMap[a] === target) {
-            score++; document.getElementById('feedback').innerText = "CORRECT! ✅";
-            document.getElementById('feedback').style.color = "#48c774";
-            if(score > high) { high = score; localStorage.setItem('best', high); document.getElementById('best').innerText = high; }
-            document.getElementById('cur').innerText = score;
+        if (targetValue === -1) return;
+        clearInterval(timerInterval);
+        const userRes = document.getElementById("risposta").value.trim().toUpperCase();
+        resetPiano();
+
+        if (noteMap[userRes] === targetValue) {
+            score++; playSound(880,'sine');
+            document.getElementById("feedback").innerText = "CORRECT! ✅";
+            document.getElementById("feedback").style.color = "#48c774";
+            if (score > highScore) { highScore = score; localStorage.setItem('scaleHighScore', highScore); document.getElementById('high-score').innerText = highScore; }
+            document.getElementById('current-score').innerText = score;
             setTimeout(nuovaDomanda, 800);
         } else {
-            score = 0; document.getElementById('cur').innerText = 0;
-            document.getElementById('feedback').innerText = "WRONG! ❌";
-            document.getElementById('feedback').style.color = "#f14668";
-            document.querySelectorAll(`.key[data-n="${target}"]`).forEach(k => k.classList.add('mark-wrong'));
+            gameOver("WRONG!");
         }
     }
 
-    // PROGS LOGIC
-    const lib = [
-        { n: "Pop (I-V-vi-IV)", s: [0, 7, 9, 5], g: "Let It Be, Despacito" },
-        { n: "Jazz (ii-V-I)", s: [2, 7, 0], g: "Autumn Leaves, Summertime" },
-        { n: "Doo-Wop (I-vi-IV-V)", s: [0, 9, 5, 7], g: "Stand By Me" },
-        { n: "Epic (vi-IV-I-V)", s: [9, 5, 0, 7], g: "Africa (Toto), Numb" }
-    ];
-    const v2n = ["C","C#","D","Eb","E","F","F#","G","Ab","A","Bb","B"];
-
-    function genProgs() {
-        const r = nMap[document.getElementById('prog-key').value];
-        const list = document.getElementById('progs-list');
-        list.innerHTML = "";
-        lib.forEach(p => {
-            const ch = p.s.map(step => v2n[(r + step) % 12]);
-            list.innerHTML += `<div class="prog-card"><div class="prog-title">${p.n}</div><div class="prog-chords">${ch.join(" - ")}</div><div class="prog-song">Ex: ${p.g}</div></div>`;
-        });
+    function gameOver(msg) {
+        score = 0;
+        playSound(220,'triangle', 0.5);
+        document.getElementById('current-score').innerText = score;
+        document.getElementById("feedback").innerText = msg;
+        document.getElementById("feedback").style.color = "#f14668";
+        document.getElementById("timer-bar").style.width = "0%";
+        highlightPiano(targetValue, 'target'); // Mostra la nota corretta sul piano
     }
 
-    // PIANO 3 OCT
-    const p = document.getElementById('piano');
-    for(let o=0; o<3; o++) {
-        for(let i=0; i<12; i++) {
-            const k = document.createElement('div');
-            k.className = [1,3,6,8,10].includes(i) ? 'key black' : 'key';
-            k.dataset.n = i;
-            p.appendChild(k);
-        }
-    }
-    genProgs();
+    document.getElementById("btnGenera").addEventListener("click", nuovaDomanda);
+    document.getElementById("btnCheck").addEventListener("click", verifica);
+    document.getElementById("risposta").addEventListener("keypress", (e) => { if(e.key==="Enter") verifica(); });
 </script>
 </body>
 </html>
