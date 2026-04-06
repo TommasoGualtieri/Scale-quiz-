@@ -14,4 +14,182 @@
 
         .score-board { display: flex; justify-content: space-around; background: linear-gradient(145deg, #2a2a2a, #202020); padding: 8px; border-radius: 12px; margin-bottom: 10px; border: 1px solid #333; }
         .score-val { font-size: 22px; font-weight: bold; background: linear-gradient(to bottom, #fff 0%, #aaa 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .score-label { font-size:
+        .score-label { font-size: 0.6rem; text-transform: uppercase; color: #999; letter-spacing: 1px; }
+
+        #timer-container { width: 100%; height: 5px; background: #333; border-radius: 3px; margin-bottom: 10px; overflow: hidden; }
+        #timer-bar { width: 100%; height: 100%; background: linear-gradient(to right, #ffdd57, #ff9f43); transition: width 0.1s linear; }
+
+        #settings-area select { width: 48%; padding: 10px; border-radius: 8px; border: 1px solid #444; font-size: 14px; background-color: #333; color: white; margin: 2px; }
+
+        .mode-switch { background: #333; padding: 6px; border-radius: 8px; margin: 8px 0; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 0.8rem; color: #aaa; }
+        .switch { position: relative; display: inline-block; width: 30px; height: 16px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #555; transition: .4s; border-radius: 20px; }
+        .slider:before { position: absolute; content: ""; height: 10px; width: 10px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
+        input:checked + .slider { background-color: var(--primary-color); }
+        input:checked + .slider:before { transform: translateX(14px); }
+
+        #domanda-box { background: #1a1a1a; padding: 10px; border-radius: 12px; margin: 10px 0; border: 1px dashed #444; }
+        #info-scala { font-size: 0.7rem; color: var(--primary-color); height: 15px; font-weight: bold; text-transform: uppercase; }
+        #domanda { font-size: 1.6rem; color: white; font-weight: bold; margin: 2px 0; }
+        
+        #piano-container { width: 100%; height: 60px; display: flex; margin: 8px 0; background: transparent; }
+        .key { flex: 1; height: 100%; border: 1px solid #ccc; background: white; border-radius: 0 0 3px 3px; position: relative; cursor: pointer; }
+        .key.black { background: #333; border-color: #111; height: 65%; margin-left: -6%; margin-right: -6%; z-index: 2; border-radius: 0 0 2px 2px; }
+        .key.correct { background-color: var(--correct-color) !important; animation: pulse 0.5s; }
+        .key.target { background-color: var(--wrong-color) !important; animation: shake 0.3s; }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
+        @keyframes shake { 0% { transform: translateX(0); } 25% { transform: translateX(-2px); } 50% { transform: translateX(2px); } 75% { transform: translateX(-2px); } 100% { transform: translateX(0); } }
+
+        input { background-color: white; color: black; font-weight: bold; text-align: center; border: 2px solid #555; font-size: 18px; padding: 12px; border-radius: 10px; width: 100%; box-sizing: border-box; }
+        input:focus { border-color: var(--primary-color); outline: none; }
+        
+        #btnCheck { background: linear-gradient(to bottom, var(--accent-color), #2980b9); color: white; font-weight: bold; margin-top: 5px; cursor: pointer; padding: 12px; border-radius: 10px; font-size: 16px; border: none; width: 100%; }
+        .btn-gen { background: transparent; color: #999; border: 1px solid #444; margin-top: 10px; font-size: 12px; padding: 8px; border-radius: 8px; cursor: pointer; width: 100%; }
+
+        #feedback { font-weight: bold; margin-top: 10px; min-height: 20px; font-size: 0.9rem; }
+    </style>
+</head>
+<body>
+
+<div class="container" id="game-container">
+    <h1>Scale Master Challenge <span>Identify the musical notes in the degrees</span></h1>
+
+    <div class="score-board">
+        <div class="score-box">
+            <span id="current-score" class="score-val">0</span>
+            <span class="score-label">Streak</span>
+        </div>
+        <div class="score-box">
+            <span id="high-score" class="score-val">0</span>
+            <span class="score-label">Best</span>
+        </div>
+    </div>
+
+    <div id="timer-container"><div id="timer-bar"></div></div>
+
+    <div id="settings-area">
+        <select id="tonica">
+            <option value="C">C</option><option value="C#">C# / Db</option><option value="D">D</option><option value="D#">D# / Eb</option><option value="E">E</option><option value="F">F</option><option value="F#">F# / Gb</option><option value="G">G</option><option value="G#">G# / Ab</option><option value="A">A</option><option value="A#">A# / Bb</option><option value="B">B</option>
+        </select>
+        <select id="tipo">
+            <option value="major">Major Scale</option><option value="naturalMinor">Natural Minor</option><option value="harmonicMinor">Harmonic Minor</option><option value="pentatonicMinor">Pentatonic Minor</option><option value="blues">Blues Scale</option>
+        </select>
+    </div>
+
+    <div class="mode-switch">
+        <span>Random Mode</span>
+        <label class="switch"><input type="checkbox" id="random-mode"><span class="slider"></span></label>
+    </div>
+
+    <div id="domanda-box">
+        <div id="info-scala"></div>
+        <div id="domanda">Ready?</div>
+    </div>
+    
+    <div id="piano-container">
+        <div class="key" data-note="C"></div><div class="key black" data-note="C#"></div><div class="key" data-note="D"></div><div class="key black" data-note="D#"></div><div class="key" data-note="E"></div><div class="key" data-note="F"></div><div class="key black" data-note="F#"></div><div class="key" data-note="G"></div><div class="key black" data-note="G#"></div><div class="key" data-note="A"></div><div class="key black" data-note="A#"></div><div class="key" data-note="B"></div>
+    </div>
+
+    <input type="text" id="risposta" placeholder="e.g. F#" autocomplete="off" spellcheck="false" inputmode="text">
+    <button id="btnCheck">VERIFY</button>
+    <button class="btn-gen" id="btnGenera">Skip / Reset Question</button>
+
+    <div id="feedback"></div>
+</div>
+
+<script>
+    const noteMap = { "C": 0, "C#": 1, "DB": 1, "D": 2, "D#": 3, "EB": 3, "E": 4, "F": 5, "F#": 6, "GB": 6, "G": 7, "G#": 8, "AB": 8, "A": 9, "A#": 10, "BB": 10, "B": 11 };
+    const valToNote = { 0: "C", 1: "C#", 2: "D", 3: "D#", 4: "E", 5: "F", 6: "F#", 7: "G", 8: "G#", 9: "A", 10: "A#", 11: "B" };
+    const patterns = { major:[0,2,4,5,7,9,11], naturalMinor:[0,2,3,5,7,8,10], harmonicMinor:[0,2,3,5,7,8,11], pentatonicMinor:[0,3,5,7,10], blues:[0,3,5,6,7,10] };
+
+    let targetValue = -1, score = 0, timeLeft = 100, timerInterval = null, currentScale = [], isFirstQuestion = true;
+    let highScore = localStorage.getItem('scaleHighScore') || 0;
+    document.getElementById('high-score').innerText = highScore;
+
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    function playSound(f,t,d=0.3){const o=audioCtx.createOscillator();const g=audioCtx.createGain();o.type=t;o.frequency.value=f;g.gain.setValueAtTime(0.05,audioCtx.currentTime);g.gain.exponentialRampToValueAtTime(0.0001,audioCtx.currentTime+d);o.connect(g);g.connect(audioCtx.destination);o.start();o.stop(audioCtx.currentTime+d);}
+
+    function resetPiano() { document.querySelectorAll('.key').forEach(k => k.classList.remove('target', 'correct')); }
+    function highlightPiano(val, cls) { 
+        const noteName = valToNote[val];
+        const key = document.querySelector(`.key[data-note="${noteName}"]`);
+        if (key) key.classList.add(cls);
+    }
+
+    function flashScreen(cls) {
+        const cont = document.getElementById('game-container');
+        cont.style.transition = 'none'; cont.style.boxShadow = `0 0 20px 5px ${cls}`;
+        setTimeout(() => { cont.style.transition = 'boxShadow 0.5s'; cont.style.boxShadow = '0 15px 35px rgba(0,0,0,0.6)'; }, 100);
+    }
+
+    function startTimer() {
+        clearInterval(timerInterval); timeLeft = 100;
+        timerInterval = setInterval(() => {
+            timeLeft -= 1.8;
+            document.getElementById("timer-bar").style.width = timeLeft + "%";
+            if (timeLeft <= 0) { gameOver("TIME EXPIRED!"); }
+        }, 150);
+    }
+
+    function nuovaDomanda() {
+        resetPiano();
+        const isRandom = document.getElementById("random-mode").checked;
+        let root, type;
+
+        if (isRandom) {
+            const keys = ["C","C#","D","D#","E","F","F#","G","G#","A","A#","B"];
+            root = keys[Math.floor(Math.random()*12)];
+            type = Object.keys(patterns)[Math.floor(Math.random()*5)];
+        } else {
+            root = document.getElementById("tonica").value.split(" ")[0];
+            type = document.getElementById("tipo").value;
+        }
+
+        document.getElementById("info-scala").innerText = `${root} ${type}`;
+        currentScale = patterns[type].map(v => (noteMap[root.toUpperCase()] + v) % 12);
+        const randIdx = Math.floor(Math.random() * currentScale.length);
+        targetValue = currentScale[randIdx];
+
+        document.getElementById("domanda").innerText = `Degree ${randIdx + 1}`;
+        document.getElementById("feedback").innerText = "";
+        document.getElementById("risposta").value = "";
+        if (!isFirstQuestion && !isRandom) document.getElementById("risposta").focus();
+        isFirstQuestion = false;
+        startTimer();
+    }
+
+    function verifica() {
+        if (targetValue === -1) return;
+        clearInterval(timerInterval);
+        const userRes = document.getElementById("risposta").value.trim().toUpperCase();
+        resetPiano();
+
+        if (noteMap[userRes] === targetValue) {
+            score++; playSound(880,'sine'); flashScreen('#48c774');
+            document.getElementById("feedback").innerText = "CORRECT! ✅";
+            document.getElementById("feedback").style.color = "#48c774";
+            if (score > highScore) { highScore = score; localStorage.setItem('scaleHighScore', highScore); document.getElementById('high-score').innerText = highScore; }
+            document.getElementById('current-score').innerText = score;
+            setTimeout(nuovaDomanda, 800);
+        } else {
+            gameOver("WRONG!");
+        }
+    }
+
+    function gameOver(msg) {
+        score = 0;
+        playSound(220,'triangle', 0.5); flashScreen('#f14668');
+        document.getElementById('current-score').innerText = score;
+        document.getElementById("feedback").innerText = msg;
+        document.getElementById("feedback").style.color = "#f14668";
+        document.getElementById("timer-bar").style.width = "0%";
+        highlightPiano(targetValue, 'target'); // Mostra la nota corretta sul piano
+    }
+
+    document.getElementById("btnGenera").addEventListener("click", nuovaDomanda);
+    document.getElementById("btnCheck").addEventListener("click", verifica);
+    document.getElementById("risposta").addEventListener("keypress", (e) => { if(e.key==="Enter") verifica(); });
+</script>
+</body>
+</html>
